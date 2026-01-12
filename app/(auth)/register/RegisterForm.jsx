@@ -15,16 +15,16 @@ const RegisterForm = () => {
   // MUI Custom Styles for Dark Theme
   const inputStyles = {
     "& .MuiOutlinedInput-root": {
-      color: "white", // টাইপ করা টেক্সট সাদা হবে
-      "& fieldset": { borderColor: "#3c2a21" }, // ডিফল্ট বর্ডার
-      "&:hover fieldset": { borderColor: "#d4a373" }, // হোভার করলে বর্ডার
-      "&.Mui-focused fieldset": { borderColor: "#d4a373" }, // ক্লিক করলে বর্ডার
+      color: "white",
+      "& fieldset": { borderColor: "#3c2a21" },
+      "&:hover fieldset": { borderColor: "#d4a373" },
+      "&.Mui-focused fieldset": { borderColor: "#d4a373" },
     },
-    "& .MuiInputLabel-root": { color: "#a1a1aa" }, // ডিফল্ট লেবেল কালার (gray-400)
-    "& .MuiInputLabel-root.Mui-focused": { color: "#d4a373" }, // ফোকাস লেবেল কালার
+    "& .MuiInputLabel-root": { color: "#a1a1aa" },
+    "& .MuiInputLabel-root.Mui-focused": { color: "#d4a373" },
     "& .MuiFormLabel-root.Mui-required .MuiFormLabel-asterisk": {
       color: "#d4a373",
-    }, // স্টার (*) কালার
+    },
   };
 
   const validatePassword = (password) => {
@@ -173,15 +173,15 @@ const RegisterForm = () => {
           <span className="font-semibold text-lg">Google</span>
         </button>
 
-        <p className="mt-8 text-center text-gray-400 flex items-center gap-1 flex-wrap">
-          <p>Already have an account? </p>
+        <div className="mt-8 text-center text-gray-400 flex items-center gap-1 flex-wrap">
+          <span>Already have an account? </span>
           <Link
             href="/login"
             className="text-[#d4a373] hover:text-[#faedcd] font-bold underline transition"
           >
             Login here
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );
