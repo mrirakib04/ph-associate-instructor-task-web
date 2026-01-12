@@ -51,7 +51,7 @@ const RegisterForm = () => {
 
     try {
       const res = await fetch(
-        "https://mrirakib-ejp-nextjs-task-server.vercel.app/register",
+        "https://mrirakib-ph-associate-instructor-task-server.vercel.app/register",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

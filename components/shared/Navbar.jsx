@@ -131,13 +131,21 @@ const Navbar = () => {
               {item.name}
             </Link>
           ))}
-          {!session && (
+          {!session ? (
             <Link
               href="/login"
               onClick={() => setNav(false)}
               className="text-2xl text-[#d4a373]"
             >
               Login
+            </Link>
+          ) : (
+            <Link
+              href="/profile"
+              onClick={() => setNav(false)}
+              className="text-2xl text-[#d4a373]"
+            >
+              Profile
             </Link>
           )}
         </div>

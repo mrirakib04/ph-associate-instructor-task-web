@@ -8,7 +8,7 @@ export const authOptions = {
       name: "Credentials",
       async authorize(credentials) {
         const res = await fetch(
-          "https://mrirakib-ejp-nextjs-task-server.vercel.app/login",
+          "https://mrirakib-ph-associate-instructor-task-server.vercel.app/login",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
