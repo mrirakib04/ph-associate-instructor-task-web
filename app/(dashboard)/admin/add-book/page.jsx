@@ -20,7 +20,7 @@ const AddBook = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
-    author: "", // এটি সেশন থেকে প্রি-ফিল হবে
+    author: "",
     genre: "",
     description: "",
     image: "",
@@ -29,7 +29,6 @@ const AddBook = () => {
   const serverUrl =
     "https://mrirakib-ph-associate-instructor-task-server.vercel.app";
 
-  // সেশন থেকে ইউজারের নাম প্রি-ফিল করার জন্য useEffect
   useEffect(() => {
     if (session?.user?.name) {
       setFormData((prev) => ({
@@ -39,7 +38,6 @@ const AddBook = () => {
     }
   }, [session]);
 
-  // ক্যাটাগরি লোড করা
   useEffect(() => {
     const fetchCats = async () => {
       try {
@@ -123,7 +121,7 @@ const AddBook = () => {
                 label="Author Name"
                 name="author"
                 required
-                value={formData.author} // সেশন থেকে আসা নাম এখানে দেখাবে
+                value={formData.author}
                 onChange={handleChange}
                 sx={inputStyle}
               />
