@@ -1,5 +1,242 @@
+"use client";
+import React, { useEffect, useState } from "react";
+import {
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+} from "@mui/material";
+import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { toast } from "react-toastify";
+import { useSession } from "next-auth/react";
+
 const ManageCategories = () => {
-  return <div>ManageCategories ManageCategories</div>;
+  // ১. useSession হুকটি কম্পোনেন্টের শুরুতে কল করুন
+  const { data: session, status } = useSession();
+
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [open, setOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [categoryName, setCategoryName] = useState("");
+  const [selectedId, setSelectedId] = useState(null);
+
+  const serverUrl =
+    "https://mrirakib-ph-associate-instructor-task-server.vercel.app";
+
+  // ২. যখনই session ডাটা আপডেট হবে তখন ক্যাটাগরি ফেচ হবে
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.email) {
+      fetchMyCategories(session.user.email);
+    }
+  }, [session, status]);
+
+  const fetchMyCategories = async (email) => {
+    try {
+      const res = await fetch(`${serverUrl}/my-categories/${email}`);
+      const data = await res.json();
+      setCategories(data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error loading categories:", error);
+      setLoading(false);
+    }
+  };
+
+  const handleOpen = (cat = null) => {
+    if (cat) {
+      setEditMode(true);
+      setSelectedId(cat._id);
+      setCategoryName(cat.name);
+    } else {
+      setEditMode(false);
+      setCategoryName("");
+    }
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setCategoryName("");
+  };
+
+  const handleSubmit = async () => {
+    if (!categoryName) return toast.error("Name is required!");
+    if (!session?.user?.email) return toast.error("User session not found!");
+
+    const method = editMode ? "PUT" : "POST";
+    const url = editMode
+      ? `${serverUrl}/categories/update/${selectedId}`
+      : `${serverUrl}/categories`;
+
+    const categoryData = {
+      name: categoryName,
+      authorEmail: session.user.email, // সেশন থেকে ইমেইল নেওয়া হচ্ছে
+    };
+
+    try {
+      const res = await fetch(url, {
+        method: method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(categoryData),
+      });
+
+      if (res.ok) {
+        toast.success(editMode ? "Updated!" : "Added Successfully!");
+        fetchMyCategories(session.user.email);
+        handleClose();
+      } else {
+        const err = await res.json();
+        toast.error(err.message || "Action failed");
+      }
+    } catch (error) {
+      toast.error("Network Error!");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (confirm("Delete this category?")) {
+      const res = await fetch(`${serverUrl}/categories/dlt/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        toast.success("Deleted!");
+        setCategories(categories.filter((c) => c._id !== id));
+      }
+    }
+  };
+
+  // সেশন লোড হওয়ার সময় একটি লোডিং স্টেট দেখানো ভালো
+  if (status === "loading")
+    return <div className="text-[#d4a373] p-10">Loading session...</div>;
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-10 w-full">
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <Typography
+            variant="h4"
+            className="font-serif font-bold text-[#d4a373]! mb-1!"
+          >
+            Manage Categories
+          </Typography>
+          <Typography variant="body2" className="text-gray-500!">
+            Showing categories for: {session?.user?.email}
+          </Typography>
+        </div>
+        <button
+          onClick={() => handleOpen()}
+          className="flex items-center gap-2 bg-[#d4a373] text-[#1a120b] px-5 py-2 rounded-lg font-bold hover:bg-[#faedcd] transition-all shadow-lg"
+        >
+          <FaPlus /> Add New
+        </button>
+      </div>
+
+      <TableContainer
+        component={Paper}
+        className="bg-[#1a120b]! border border-[#3c2a21]! rounded-2xl overflow-hidden shadow-2xl!"
+      >
+        <Table>
+          <TableHead className="bg-[#2d241e]!">
+            <TableRow>
+              <TableCell className="text-[#d4a373]! font-bold!">
+                Category Name
+              </TableCell>
+              <TableCell className="text-[#d4a373]! font-bold! text-right!">
+                Actions
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {categories.map((cat) => (
+              <TableRow
+                key={cat._id}
+                className="hover:bg-[#2d241e]! transition-colors"
+              >
+                <TableCell className="text-[#e7dec8]! border-b-[#3c2a21]! font-medium!">
+                  {cat.name}
+                </TableCell>
+                <TableCell className="text-right! border-b-[#3c2a21]!">
+                  <IconButton
+                    onClick={() => handleOpen(cat)}
+                    className="text-blue-400! hover:bg-blue-400/10!"
+                  >
+                    <FaEdit size={18} />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => handleDelete(cat._id)}
+                    className="text-red-400! hover:bg-red-400/10!"
+                  >
+                    <FaTrash size={18} />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        {!loading && categories.length === 0 && (
+          <div className="text-center py-10 text-gray-500!">
+            No categories found for you.
+          </div>
+        )}
+      </TableContainer>
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        PaperProps={{
+          className: "bg-[#1a120b]! border border-[#3c2a21]! min-w-[350px]",
+        }}
+      >
+        <DialogTitle className="text-[#d4a373]! font-serif! font-bold!">
+          {editMode ? "Update Category" : "Add New Category"}
+        </DialogTitle>
+        <DialogContent className="pt-2!">
+          <TextField
+            fullWidth
+            label="Category Name"
+            variant="outlined"
+            value={categoryName}
+            onChange={(e) => setCategoryName(e.target.value)}
+            sx={inputStyle}
+          />
+        </DialogContent>
+        <DialogActions className="p-4!">
+          <Button onClick={handleClose} className="text-gray-400!">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            className="bg-[#d4a373]! text-[#1a120b]! font-bold! hover:bg-[#faedcd]!"
+          >
+            {editMode ? "Update" : "Save"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+};
+
+const inputStyle = {
+  "& .MuiOutlinedInput-root": {
+    color: "#e7dec8 !important",
+    "& fieldset": { borderColor: "#3c2a21 !important" },
+    "&:hover fieldset": { borderColor: "#d4a373 !important" },
+    "&.Mui-focused fieldset": { borderColor: "#d4a373 !important" },
+  },
+  "& .MuiInputLabel-root": { color: "#d4a373 !important" },
 };
 
 export default ManageCategories;
