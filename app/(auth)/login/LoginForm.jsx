@@ -113,7 +113,7 @@ const LoginForm = () => {
             </Button>
           </form>
 
-          <div className="my-4 flex items-center gap-4">
+          {/* <div className="my-4 flex items-center gap-4">
             <div className="h-px bg-[#3c2a21] flex-1"></div>
             <span className="text-gray-500 text-sm">OR</span>
             <div className="h-px bg-[#3c2a21] flex-1"></div>
@@ -125,7 +125,7 @@ const LoginForm = () => {
           >
             <FcGoogle className="text-2xl" />
             <span className="font-semibold text-lg">Google</span>
-          </button>
+          </button> */}
 
           <div className="mt-4 text-center font-medium text-gray-400 flex items-center gap-1 flex-wrap">
             <span>New User? </span>

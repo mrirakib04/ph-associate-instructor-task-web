@@ -159,7 +159,7 @@ const RegisterForm = () => {
           </Button>
         </form>
 
-        <div className="my-8 flex items-center gap-4">
+        {/* <div className="my-8 flex items-center gap-4">
           <div className="h-px bg-[#3c2a21] flex-1"></div>
           <span className="text-gray-500 text-sm">Continue with</span>
           <div className="h-px bg-[#3c2a21] flex-1"></div>
@@ -171,7 +171,7 @@ const RegisterForm = () => {
         >
           <FcGoogle className="text-2xl" />
           <span className="font-semibold text-lg">Google</span>
-        </button>
+        </button> */}
 
         <div className="mt-8 text-center text-gray-400 flex items-center gap-1 flex-wrap">
           <span>Already have an account? </span>

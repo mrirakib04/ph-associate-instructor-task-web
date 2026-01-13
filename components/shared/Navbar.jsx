@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
@@ -10,6 +10,22 @@ const Navbar = () => {
   const { data: session } = useSession();
   const [nav, setNav] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const [dbUser, setDbUser] = useState(null);
+
+  useEffect(() => {
+    if (session?.user?.email) {
+      fetch(
+        `https://mrirakib-ph-associate-instructor-task-server.vercel.app/user/${session.user.email}`
+      )
+        .then((res) => res.json())
+        .then((data) => setDbUser(data));
+    }
+  }, [session]);
+
+  console.log(dbUser);
+
+  const dashboardPath = dbUser?.role == "Admin" ? "/admin" : "/user";
 
   const open = Boolean(anchorEl);
   const handleClick = (event) => setAnchorEl(event.currentTarget);
@@ -22,12 +38,12 @@ const Navbar = () => {
   ];
 
   // Admin access links
-  if (session?.user?.role === "admin") {
-    navLinks.push({ name: "Admin Dashboard", link: "/admin" });
-  }
+  // if (dbUser?.role === "Admin") {
+  //   navLinks.push({ name: "Admin Dashboard", link: "/admin" });
+  // }
 
   return (
-    <nav className="bg-[#1a120b] border-b border-[#3c2a21] text-[#e7dec8] fixed top-0 z-50 w-full">
+    <nav className="bg-[#1a120b] max-w-370 mx-auto border-b border-[#3c2a21] text-[#e7dec8] fixed top-0 z-50 w-full">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo Section */}
@@ -49,7 +65,14 @@ const Navbar = () => {
                 {item.name}
               </Link>
             ))}
-
+            {session && (
+              <Link
+                href={dashboardPath}
+                className="text-sm font-medium hover:text-[#d4a373] transition-colors duration-300"
+              >
+                Dashboard
+              </Link>
+            )}
             {session ? (
               <div className="flex items-center gap-4">
                 <Tooltip title="Account settings">
@@ -131,6 +154,14 @@ const Navbar = () => {
               {item.name}
             </Link>
           ))}
+          {session && (
+            <Link
+              href={dashboardPath}
+              className="text-2xl font-serif hover:text-[#d4a373]"
+            >
+              Dashboard
+            </Link>
+          )}
           {!session ? (
             <Link
               href="/login"
