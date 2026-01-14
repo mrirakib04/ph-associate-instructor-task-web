@@ -57,7 +57,7 @@ const ManageBooks = () => {
 
       const bookData = await bookRes.json();
       const catData = await catRes.json();
-      setBooks(bookData);
+      setBooks(Array.isArray(bookData.books) ? bookData.books : []);
       setCategories(catData);
       setLoading(false);
     } catch (error) {
@@ -122,7 +122,7 @@ const ManageBooks = () => {
           Manage Inventory
         </Typography>
         <Link href="/admin/add-book">
-          <button className="flex items-center gap-2 bg-[#d4a373] text-[#1a120b] px-5 py-2 rounded-lg font-bold hover:bg-[#faedcd] transition-all shadow-lg">
+          <button className="flex items-center gap-2 cursor-pointer bg-[#d4a373] text-[#1a120b] px-5 py-2 rounded-lg font-bold hover:bg-[#faedcd] transition-all shadow-lg">
             <FaPlus /> Add Book
           </button>
         </Link>
@@ -130,7 +130,7 @@ const ManageBooks = () => {
 
       <TableContainer
         component={Paper}
-        className="bg-[#1a120b]! border border-[#3c2a21]! rounded-2xl overflow-hidden shadow-2xl"
+        className="bg-[#1a120b]! border text-nowrap border-[#3c2a21]! rounded-2xl overflow-hidden shadow-2xl"
       >
         <Table>
           <TableHead className="bg-[#2d241e]!">

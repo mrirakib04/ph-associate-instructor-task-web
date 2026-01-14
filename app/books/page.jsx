@@ -149,7 +149,7 @@ const Books = () => {
                 key={book._id}
                 className="bg-[#1a120b] border border-[#3c2a21] rounded-xl overflow-hidden hover:border-[#d4a373] transition-all group flex flex-col shadow-lg hover:shadow-2xl"
               >
-                <div className="relative aspect-4/4 overflow-hidden bg-black">
+                <div className="relative aspect-7/8 overflow-hidden bg-black">
                   <img
                     src={book.image}
                     alt={book.title}
