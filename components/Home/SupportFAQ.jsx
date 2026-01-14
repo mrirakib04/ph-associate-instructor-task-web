@@ -8,6 +8,7 @@ import {
   AccordionDetails,
 } from "@mui/material";
 import { FaChevronDown, FaQuestionCircle, FaHeadset } from "react-icons/fa";
+import Link from "next/link";
 
 const faqs = [
   {
@@ -40,7 +41,7 @@ const faqs = [
 const SupportFAQ = () => {
   return (
     <section className="w-full bg-[#0f0a07] py-24 px-4 border-t border-[#3c2a21]">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-[#1a120b] border border-[#d4a373]/30 px-4 py-1.5 rounded-full mb-4">
@@ -99,9 +100,11 @@ const SupportFAQ = () => {
           <Typography className="text-gray-400! mb-4!">
             Still have questions? We're here to help you.
           </Typography>
-          <button className="bg-[#d4a373] hover:bg-[#faedcd] text-[#1a120b] px-8 py-3 rounded-xl font-bold transition-all cursor-pointer shadow-lg active:scale-95">
-            Contact Support
-          </button>
+          <Link href="/contact">
+            <button className="bg-[#d4a373] hover:bg-[#faedcd] text-[#1a120b] px-8 py-3 rounded-xl font-bold transition-all cursor-pointer shadow-lg active:scale-95">
+              Contact Support
+            </button>
+          </Link>
         </div>
       </div>
     </section>

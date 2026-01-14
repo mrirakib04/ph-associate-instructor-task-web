@@ -49,8 +49,15 @@ const Footer = () => {
           <div className="flex flex-col gap-3">
             <h4 className="text-[#d4a373] font-bold">Community</h4>
             <div className="flex gap-4 text-xl">
-              <FaGithub className="cursor-pointer hover:text-[#d4a373]" />
-              <FaLinkedin className="cursor-pointer hover:text-[#d4a373]" />
+              <a target="_blank" href="https://github.com/mrirakib04/">
+                <FaGithub className="cursor-pointer hover:text-[#d4a373]" />
+              </a>
+              <a
+                target="_blank"
+                href="https://www.linkedin.com/in/webdev-rakib/s"
+              >
+                <FaLinkedin className="cursor-pointer hover:text-[#d4a373]" />
+              </a>
             </div>
           </div>
         </div>
