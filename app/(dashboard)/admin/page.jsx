@@ -12,6 +12,15 @@ import {
   FaChalkboardTeacher,
 } from "react-icons/fa";
 import Link from "next/link";
+// Recharts Imports
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 
 const Admin = () => {
   const { data: session } = useSession();
@@ -33,6 +42,16 @@ const Admin = () => {
         .catch(() => setLoading(false));
     }
   }, [user?.email]);
+
+  // Chart Data Preparation
+  const chartData = [
+    { name: "My Books", value: stats?.totalBooks || 0 },
+    { name: "Platform Users", value: stats?.totalUsers || 0 },
+    { name: "Reviews Received", value: stats?.totalReviews || 0 },
+  ];
+
+  // Professional Colors to match your theme
+  const COLORS = ["#d4a373", "#faedcd", "#a8a29e"];
 
   const statCardClass =
     "flex-1 min-w-[240px] bg-[#1a120b] border border-[#3c2a21] rounded-2xl sm:p-6 p-4 flex flex-col justify-between transition-all duration-300 hover:border-[#d4a373]";
@@ -171,6 +190,51 @@ const Admin = () => {
             <p className="text-gray-500 text-sm">Moderation</p>
           </div>
         </Link>
+      </div>
+
+      {/* Analytics Section - Pie Chart */}
+      <div className="mt-12 bg-[#1a120b] border border-[#3c2a21] rounded-xl sm:rounded-3xl sm:p-8 p-2 pb-4 shadow-2xl">
+        <Typography
+          variant="h6"
+          className="text-[#e7dec8] font-serif mb-6 flex items-center gap-2"
+        >
+          <span className="w-2 h-6 bg-[#d4a373] rounded-full"></span>{" "}
+          Distribution Analytics
+        </Typography>
+
+        <div className="h-80 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={chartData}
+                cx="50%"
+                cy="50%"
+                innerRadius={80} // Donut shape
+                outerRadius={120}
+                paddingAngle={8}
+                dataKey="value"
+                stroke="none"
+              >
+                {chartData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#1a120b",
+                  borderColor: "#3c2a21",
+                  borderRadius: "10px",
+                  color: "#e7dec8",
+                }}
+                itemStyle={{ color: "#d4a373" }}
+              />
+              <Legend verticalAlign="bottom" height={36} iconType="circle" />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );
