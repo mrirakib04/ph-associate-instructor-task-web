@@ -33,6 +33,11 @@ const LoginForm = () => {
     const email = target.email.value;
     const password = target.password.value;
 
+    await performLogin(email, password);
+  };
+
+  // Common Login Function
+  const performLogin = async (email, password) => {
     const res = await signIn("credentials", {
       email,
       password,
@@ -51,6 +56,16 @@ const LoginForm = () => {
         autoClose: 2000,
       });
     }
+  };
+
+  // Quick Login Handler
+  const handleQuickLogin = (role) => {
+    const credentials = {
+      admin: { email: "admin@mailinator.com", pass: "ABC@123abc" },
+      user: { email: "user@mailinator.com", pass: "ABC@123abc" },
+    };
+    const { email, pass } = credentials[role];
+    performLogin(email, pass);
   };
 
   // Google Login
@@ -113,21 +128,35 @@ const LoginForm = () => {
             </Button>
           </form>
 
-          {/* <div className="my-4 flex items-center gap-4">
-            <div className="h-px bg-[#3c2a21] flex-1"></div>
-            <span className="text-gray-500 text-sm">OR</span>
-            <div className="h-px bg-[#3c2a21] flex-1"></div>
+          {/* Quick Login Buttons */}
+          <div className="flex flex-col gap-3 mt-4">
+            <div className="flex items-center gap-2">
+              <div className="h-px bg-[#3c2a21] flex-1"></div>
+              <span className="text-gray-500 text-xs uppercase tracking-widest">
+                Quick Access
+              </span>
+              <div className="h-px bg-[#3c2a21] flex-1"></div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => handleQuickLogin("admin")}
+                className="bg-[#3c2a21] cursor-pointer hover:bg-[#d4a373] text-[#e7dec8] hover:text-[#1a120b] py-2.5 rounded-xl text-sm font-bold transition-all duration-300 border border-[#d4a373]/20"
+              >
+                Admin Demo
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickLogin("user")}
+                className="bg-[#3c2a21] cursor-pointer hover:bg-[#d4a373] text-[#e7dec8] hover:text-[#1a120b] py-2.5 rounded-xl text-sm font-bold transition-all duration-300 border border-[#d4a373]/20"
+              >
+                User Demo
+              </button>
+            </div>
           </div>
 
-          <button
-            onClick={handleGoogleMethod}
-            className="w-full border border-[#3c2a21] bg-transparent text-[#e7dec8] rounded-lg py-3 flex items-center justify-center gap-3 transition hover:bg-[#2d241e] cursor-pointer"
-          >
-            <FcGoogle className="text-2xl" />
-            <span className="font-semibold text-lg">Google</span>
-          </button> */}
-
-          <div className="mt-4 text-center font-medium text-gray-400 flex items-center gap-1 flex-wrap">
+          <div className="mt-4 text-center font-medium text-gray-400 flex items-center gap-1 flex-wrap justify-center">
             <span>New User? </span>
             <Link
               className="text-[#d4a373] hover:text-[#faedcd] font-bold underline duration-300"
