@@ -1,6 +1,7 @@
 "use client";
-import React from "react";
-import { Typography, Box, Paper } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { Typography, Box, CircularProgress } from "@mui/material";
 import {
   FaBook,
   FaUsers,
@@ -13,13 +14,40 @@ import {
 import Link from "next/link";
 
 const Admin = () => {
+  const { data: session } = useSession();
+  const user = session?.user;
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const serverUrl =
+    "https://mrirakib-ph-associate-instructor-task-server.vercel.app";
+
+  useEffect(() => {
+    if (user?.email) {
+      fetch(`${serverUrl}/admin/stats/${user.email}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setStats(data);
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+    }
+  }, [user?.email]);
+
   const statCardClass =
-    "flex-1 min-w-[280px] bg-[#1a120b] border border-[#3c2a21] rounded-2xl sm:p-6 p-3 flex flex-col justify-between transition-all duration-300 hover:border-[#d4a373]";
+    "flex-1 min-w-[240px] bg-[#1a120b] border border-[#3c2a21] rounded-2xl sm:p-6 p-4 flex flex-col justify-between transition-all duration-300 hover:border-[#d4a373]";
   const actionCardClass =
-    "sm:p-6 p-3 bg-[#1a120b] border border-[#3c2a21] rounded-2xl group-hover:bg-[#2d241e] transition-all cursor-pointer h-full flex flex-col justify-center";
+    "sm:p-6 p-5 bg-[#1a120b] border border-[#3c2a21] rounded-2xl group-hover:bg-[#2d241e] transition-all cursor-pointer h-full flex flex-col justify-center";
+
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <CircularProgress sx={{ color: "#d4a373" }} />
+      </div>
+    );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10">
+    <div className="max-w-7xl mx-auto px-4 py-10 w-full">
       {/* Header Section */}
       <Box className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
@@ -30,59 +58,62 @@ const Admin = () => {
             Admin <span className="text-[#e7dec8]">Control Center</span>
           </Typography>
           <Typography variant="body1" className="text-gray-400">
-            Overview of your library performance and management tools.
+            Welcome back, {user?.name || "Admin"}. Here is your library's
+            performance.
           </Typography>
         </div>
         <Link href="/admin/manage-books">
-          <button className="flex items-center gap-2 bg-[#d4a373] hover:bg-[#faedcd] text-[#1a120b] px-6 py-2.5 rounded-lg font-bold transition-all shadow-lg">
-            <FaPlusCircle /> Add/Manage Books
+          <button className="flex items-center gap-2 bg-[#d4a373] hover:bg-[#faedcd] text-[#1a120b] px-6 py-2.5 rounded-lg font-bold transition-all shadow-lg cursor-pointer">
+            <FaPlusCircle /> Manage My Books
           </button>
         </Link>
       </Box>
 
-      {/* Primary Stats - Same Height Layout */}
+      {/* Dynamic Stats Row */}
       <div className="flex flex-wrap gap-6 items-stretch mb-10">
         <div className={statCardClass}>
           <div className="flex justify-between">
             <Typography className="text-gray-500 uppercase text-xs font-bold">
-              Total Books
+              Your Books
             </Typography>
             <FaBook className="text-[#d4a373]" />
           </div>
           <Typography variant="h4" className="text-white font-bold mt-2">
-            1,284
+            {stats?.totalBooks || 0}
           </Typography>
-          <div className="mt-4 text-emerald-500 text-xs">+12 this week</div>
+          <div className="mt-4 text-emerald-500 text-xs">Live in Library</div>
         </div>
 
         <div className={statCardClass}>
           <div className="flex justify-between">
             <Typography className="text-gray-500 uppercase text-xs font-bold">
-              Total Users
+              Total Platform Users
             </Typography>
             <FaUsers className="text-[#d4a373]" />
           </div>
           <Typography variant="h4" className="text-white font-bold mt-2">
-            856
+            {stats?.totalUsers || 0}
           </Typography>
-          <div className="mt-4 text-emerald-500 text-xs">+45 active</div>
+          <div className="mt-4 text-emerald-500 text-xs">
+            Registered readers
+          </div>
         </div>
 
         <div className={statCardClass}>
           <div className="flex justify-between">
             <Typography className="text-gray-500 uppercase text-xs font-bold">
-              Growth
+              Total Reviews
             </Typography>
-            <FaChartLine className="text-[#d4a373]" />
+            <FaStar className="text-[#d4a373]" />
           </div>
           <Typography variant="h4" className="text-white font-bold mt-2">
-            78%
+            {stats?.totalReviews || 0}
           </Typography>
-          <div className="mt-4 text-amber-500 text-xs">Top Performance</div>
+          <div className="mt-4 text-amber-500 text-xs">Feedback received</div>
         </div>
       </div>
 
-      {/* Management Grid - Mapping to your folder structure */}
+      {/* Management Grid */}
       <Typography
         variant="h6"
         className="text-[#d4a373] font-serif mb-6! border-l-4! border-[#d4a373] pl-4!"
@@ -90,65 +121,54 @@ const Admin = () => {
         Quick Management Links
       </Typography>
 
-      <div className="flex flex-wrap gap-6 justify-center items-stretch">
-        {/* Manage Books */}
-        <Link href="/admin/manage-books" className="group w-full sm:max-w-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+        <Link href="/admin/manage-books" className="group">
           <div className={actionCardClass}>
             <FaBook className="text-2xl text-[#d4a373] mb-3" />
             <Typography variant="h6" className="text-white font-bold mb-1">
-              Books List
+              Books ({stats?.totalBooks})
             </Typography>
-            <p className="text-gray-500 text-sm">Inventory, stock & details</p>
+            <p className="text-gray-500 text-sm">Inventory & Stock</p>
           </div>
         </Link>
 
-        {/* Manage Categories */}
-        <Link
-          href="/admin/manage-categories"
-          className="group w-full sm:max-w-xs"
-        >
+        <Link href="/admin/manage-categories" className="group">
           <div className={actionCardClass}>
             <FaTags className="text-2xl text-[#d4a373] mb-3" />
             <Typography variant="h6" className="text-white font-bold mb-1">
-              Categories
+              Genres ({stats?.totalCategories})
             </Typography>
-            <p className="text-gray-500 text-sm">Organize genres & tags</p>
+            <p className="text-gray-500 text-sm">Organize Tags</p>
           </div>
         </Link>
 
-        {/* Manage Users */}
-        <Link href="/admin/manage-users" className="group w-full sm:max-w-xs">
+        <Link href="/admin/manage-users" className="group">
           <div className={actionCardClass}>
             <FaUsers className="text-2xl text-[#d4a373] mb-3" />
             <Typography variant="h6" className="text-white font-bold mb-1">
-              User Control
+              Users
             </Typography>
-            <p className="text-gray-500 text-sm">Roles & account status</p>
+            <p className="text-gray-500 text-sm">Roles & Accounts</p>
           </div>
         </Link>
 
-        {/* Manage Tutorials */}
-        <Link
-          href="/admin/manage-tutorials"
-          className="group w-full sm:max-w-xs"
-        >
+        <Link href="/admin/manage-tutorials" className="group">
           <div className={actionCardClass}>
             <FaChalkboardTeacher className="text-2xl text-[#d4a373] mb-3" />
             <Typography variant="h6" className="text-white font-bold mb-1">
-              Tutorials
+              Videos ({stats?.totalTutorials})
             </Typography>
-            <p className="text-gray-500 text-sm">Educational resources</p>
+            <p className="text-gray-500 text-sm">Resources</p>
           </div>
         </Link>
 
-        {/* Manage Reviews */}
-        <Link href="/admin/manage-reviews" className="group w-full sm:max-w-xs">
+        <Link href="/admin/manage-reviews" className="group">
           <div className={actionCardClass}>
             <FaStar className="text-2xl text-[#d4a373] mb-3" />
             <Typography variant="h6" className="text-white font-bold mb-1">
-              Reviews
+              Reviews ({stats?.totalReviews})
             </Typography>
-            <p className="text-gray-500 text-sm">Feedback & moderation</p>
+            <p className="text-gray-500 text-sm">Moderation</p>
           </div>
         </Link>
       </div>
