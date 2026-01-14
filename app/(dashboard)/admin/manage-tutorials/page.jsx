@@ -124,9 +124,9 @@ const ManageTutorials = () => {
       <div className="flex justify-between items-center mb-8">
         <Typography
           variant="h4"
-          className="font-serif font-bold text-[#d4a373]!"
+          className="text-[#e7dec8]! font-serif! md:text-4xl! sm:text-3xl! text-2xl! font-bold!"
         >
-          Manage Tutorials
+          Manage <span className="text-[#d4a373]">Tutorials</span>
         </Typography>
         <Button
           variant="contained"

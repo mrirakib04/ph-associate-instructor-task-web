@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import {
   Typography,
@@ -18,16 +18,18 @@ import {
   FaBookReader,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { useSession } from "next-auth/react";
 
 const BookDetails = () => {
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [userReview, setUserReview] = useState({ rating: 5, comment: "" });
+  const [userReview, setUserReview] = useState({ rating: 4, comment: "" });
 
-  // AuthContext থেকে আসা উচিত (ডামি ডাটা)
-  const user = { name: "John Doe", email: "reader@example.com" };
+  const { data: session } = useSession();
+  const user = session?.user;
+  console.log(user);
 
   const serverUrl =
     "https://mrirakib-ph-associate-instructor-task-server.vercel.app";
@@ -113,8 +115,8 @@ const BookDetails = () => {
     return (total / reviews.length).toFixed(1);
   };
 
-  const averageRating = calculateAverageRating(book.reviews);
-  const totalReviews = book.reviews?.length || 0;
+  const averageRating = calculateAverageRating(book?.reviews);
+  const totalReviews = book?.reviews?.length || 0;
 
   if (loading) {
     return (
@@ -171,14 +173,14 @@ const BookDetails = () => {
 
             <Typography
               variant="h2"
-              className="font-serif font-bold text-[#e7dec8] mb-4 leading-tight"
+              className="font-serif font-bold lg:text-5xl! md:text-4xl! text-3xl! text-[#e7dec8] mb-4 leading-tight"
             >
               {book.title}
             </Typography>
 
             <Typography
               variant="h5"
-              className="text-[#d4a373] font-serif italic mb-6!"
+              className="text-[#d4a373] font-serif md:text-xl! text-lg! italic mb-6!"
             >
               by{" "}
               <span className="underline decoration-wavy">{book.author}</span>
@@ -219,7 +221,7 @@ const BookDetails = () => {
               </div>
             </div>
 
-            <Typography className="text-gray-400 leading-loose text-lg mb-12 font-light first-letter:text-5xl first-letter:font-serif first-letter:text-[#d4a373] first-letter:mr-3 first-letter:float-left">
+            <Typography className="text-gray-400! leading-loose text-lg mb-12! font-light! first-letter:text-5xl first-letter:font-serif first-letter:text-[#d4a373] first-letter:mr-3! first-letter:float-left!">
               {book.description}
             </Typography>
 
@@ -235,7 +237,7 @@ const BookDetails = () => {
           </div>
         </div>
 
-        <Divider className="bg-[#3c2a21] mb-20" />
+        <Divider className="bg-[#3c2a21] mb-20!" />
 
         {/* --- Review Section --- */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
@@ -279,7 +281,7 @@ const BookDetails = () => {
                     <p className="text-gray-400 leading-relaxed italic text-lg relative z-10">
                       "{rev.review}"
                     </p>
-                    <div className="absolute bottom-4 right-8 text-[#3c2a21] text-6xl font-serif opacity-20 group-hover:opacity-40 transition-opacity">
+                    <div className="absolute bottom-4 right-8 text-[#d4a373] text-6xl font-serif opacity-20 group-hover:opacity-40 transition-opacity">
                       ”
                     </div>
                   </div>
@@ -295,7 +297,7 @@ const BookDetails = () => {
           </div>
 
           {/* Submit Review Form */}
-          <div className="bg-[#1a120b] p-10 rounded-4xl border border-[#3c2a21] h-fit sticky top-24 shadow-2xl overflow-hidden">
+          <div className="bg-[#1a120b] md:p-10 sm:p-6 p-4 rounded-4xl border border-[#3c2a21] h-fit sticky top-24 shadow-2xl overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-[#d4a373] opacity-5 rounded-bl-full"></div>
 
             <Typography variant="h5" className="text-[#e7dec8] font-serif mb-2">
@@ -316,7 +318,15 @@ const BookDetails = () => {
                   onChange={(e, val) =>
                     setUserReview({ ...userReview, rating: val })
                   }
-                  sx={{ color: "#d4a373" }}
+                  sx={{
+                    "& .MuiRating-iconFilled": {
+                      color: "#d4a373 !important",
+                    },
+
+                    "& .MuiRating-iconEmpty": {
+                      color: "#3c2a21 !important",
+                    },
+                  }}
                 />
               </div>
 
@@ -335,7 +345,7 @@ const BookDetails = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className={`group relative mt-4 w-full py-5 bg-[#d4a373] text-[#1a120b] font-black rounded-2xl transition-all uppercase tracking-widest shadow-lg overflow-hidden ${
+                className={`group relative mt-4 w-full py-3 cursor-pointer bg-[#d4a373] text-[#1a120b] font-black rounded-2xl transition-all uppercase tracking-widest shadow-lg overflow-hidden ${
                   submitting
                     ? "opacity-50 cursor-not-allowed"
                     : "hover:scale-[1.02] active:scale-95"

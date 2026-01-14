@@ -95,9 +95,9 @@ const AddBook = () => {
     <div className="max-w-7xl mx-auto px-4 py-10 w-full">
       <Typography
         variant="h4"
-        className="font-serif font-bold text-[#d4a373]! mb-8!"
+        className="font-serif! md:text-4xl! sm:text-3xl! text-2xl! font-bold! text-[#d4a373]! mb-8!"
       >
-        Add New Book
+        Add New <span className="text-[#e7dec8]">Book</span>
       </Typography>
 
       <Paper className="bg-[#1a120b]! border border-[#3c2a21]! p-6 md:p-10 rounded-2xl shadow-2xl!">

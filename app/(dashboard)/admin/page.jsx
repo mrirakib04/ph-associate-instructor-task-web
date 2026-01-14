@@ -26,9 +26,9 @@ const Admin = () => {
         <div>
           <Typography
             variant="h4"
-            className="font-serif font-bold text-[#d4a373] mb-2"
+            className="font-serif! md:text-4xl! sm:text-3xl! text-2xl! font-bold text-[#d4a373]!"
           >
-            Admin Control Center
+            Admin <span className="text-[#e7dec8]">Control Center</span>
           </Typography>
           <Typography variant="body1" className="text-gray-400">
             Overview of your library performance and management tools.

@@ -124,13 +124,13 @@ const ManageCategories = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10 w-full">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-8 flex-wrap gap-5">
         <div>
           <Typography
             variant="h4"
-            className="font-serif font-bold text-[#d4a373]! mb-1!"
+            className="text-[#e7dec8]! font-serif! md:text-4xl! sm:text-3xl! text-2xl! font-bold! mb-1!"
           >
-            Manage Categories
+            Manage <span className="text-[#d4a373]">Categories</span>
           </Typography>
           <Typography variant="body2" className="text-gray-500!">
             Showing categories for: {session?.user?.email}

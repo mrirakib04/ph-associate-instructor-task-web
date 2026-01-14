@@ -117,9 +117,9 @@ const ManageBooks = () => {
       <div className="flex justify-between items-center mb-8">
         <Typography
           variant="h4"
-          className="font-serif font-bold text-[#d4a373]! mb-0!"
+          className="text-[#e7dec8]! font-serif! md:text-4xl! sm:text-3xl! text-2xl! font-bold!"
         >
-          Manage Inventory
+          Manage <span className="text-[#d4a373]">Books</span>
         </Typography>
         <Link href="/admin/add-book">
           <button className="flex items-center gap-2 cursor-pointer bg-[#d4a373] text-[#1a120b] px-5 py-2 rounded-lg font-bold hover:bg-[#faedcd] transition-all shadow-lg">
