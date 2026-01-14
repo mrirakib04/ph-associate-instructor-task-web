@@ -13,11 +13,10 @@ import {
 import Link from "next/link";
 
 const Admin = () => {
-  // কার্ডের জন্য কমন স্টাইল ক্লাস
   const statCardClass =
-    "flex-1 min-w-[280px] bg-[#1a120b] border border-[#3c2a21] rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 hover:border-[#d4a373]";
+    "flex-1 min-w-[280px] bg-[#1a120b] border border-[#3c2a21] rounded-2xl sm:p-6 p-3 flex flex-col justify-between transition-all duration-300 hover:border-[#d4a373]";
   const actionCardClass =
-    "p-6 bg-[#1a120b] border border-[#3c2a21] rounded-2xl group-hover:bg-[#2d241e] transition-all cursor-pointer h-full flex flex-col justify-center";
+    "sm:p-6 p-3 bg-[#1a120b] border border-[#3c2a21] rounded-2xl group-hover:bg-[#2d241e] transition-all cursor-pointer h-full flex flex-col justify-center";
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">

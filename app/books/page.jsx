@@ -130,7 +130,7 @@ const Books = () => {
               }}
             >
               <MenuItem value="newest">Newest Added</MenuItem>
-              <MenuItem value="rating">Highest Rated</MenuItem>
+              <MenuItem value="oldest">Oldest First</MenuItem>
             </Select>
           </FormControl>
         </div>
