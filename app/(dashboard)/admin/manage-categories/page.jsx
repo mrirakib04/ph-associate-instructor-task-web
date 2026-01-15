@@ -16,17 +16,24 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  Pagination,
+  CircularProgress,
+  Box,
 } from "@mui/material";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 
 const ManageCategories = () => {
-  // ১. useSession হুকটি কম্পোনেন্টের শুরুতে কল করুন
   const { data: session, status } = useSession();
 
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Pagination States
+  const [page, setPage] = useState(1);
+  const [totalCategories, setTotalCategories] = useState(0);
+  const size = 10;
 
   const [open, setOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -36,23 +43,32 @@ const ManageCategories = () => {
   const serverUrl =
     "https://mrirakib-ph-associate-instructor-task-server.vercel.app";
 
-  // ২. যখনই session ডাটা আপডেট হবে তখন ক্যাটাগরি ফেচ হবে
   useEffect(() => {
     if (status === "authenticated" && session?.user?.email) {
-      fetchMyCategories(session.user.email);
+      fetchMyCategories();
     }
-  }, [session, status]);
+  }, [session, status, page]);
 
-  const fetchMyCategories = async (email) => {
+  const fetchMyCategories = async () => {
     try {
-      const res = await fetch(`${serverUrl}/my-categories/${email}`);
+      setLoading(true);
+      const res = await fetch(
+        `${serverUrl}/my-categories/${session.user.email}?page=${
+          page - 1
+        }&size=${size}`
+      );
       const data = await res.json();
-      setCategories(data);
+      setCategories(data.categories || []);
+      setTotalCategories(data.totalCount || 0);
       setLoading(false);
     } catch (error) {
       console.error("Error loading categories:", error);
       setLoading(false);
     }
+  };
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
   };
 
   const handleOpen = (cat = null) => {
@@ -83,7 +99,7 @@ const ManageCategories = () => {
 
     const categoryData = {
       name: categoryName,
-      authorEmail: session.user.email, // সেশন থেকে ইমেইল নেওয়া হচ্ছে
+      authorEmail: session.user.email,
     };
 
     try {
@@ -95,7 +111,7 @@ const ManageCategories = () => {
 
       if (res.ok) {
         toast.success(editMode ? "Updated!" : "Added Successfully!");
-        fetchMyCategories(session.user.email);
+        fetchMyCategories();
         handleClose();
       } else {
         const err = await res.json();
@@ -113,14 +129,18 @@ const ManageCategories = () => {
       });
       if (res.ok) {
         toast.success("Deleted!");
-        setCategories(categories.filter((c) => c._id !== id));
+        fetchMyCategories();
       }
     }
   };
 
-  // সেশন লোড হওয়ার সময় একটি লোডিং স্টেট দেখানো ভালো
+  // MUI Loader
   if (status === "loading")
-    return <div className="text-[#d4a373] p-10">Loading session...</div>;
+    return (
+      <Box className="flex justify-center items-center min-h-100">
+        <CircularProgress sx={{ color: "#d4a373" }} />
+      </Box>
+    );
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10 w-full">
@@ -133,7 +153,7 @@ const ManageCategories = () => {
             Manage <span className="text-[#d4a373]">Categories</span>
           </Typography>
           <Typography variant="body2" className="text-gray-500!">
-            Showing categories for: {session?.user?.email}
+            Total categories found: {totalCategories}
           </Typography>
         </div>
         <button
@@ -146,52 +166,78 @@ const ManageCategories = () => {
 
       <TableContainer
         component={Paper}
-        className="bg-[#1a120b]! border border-[#3c2a21]! rounded-2xl overflow-hidden shadow-2xl!"
+        className="bg-[#1a120b]! border border-[#3c2a21]! rounded-2xl overflow-hidden shadow-2xl! min-h-75 relative"
       >
-        <Table>
-          <TableHead className="bg-[#2d241e]!">
-            <TableRow>
-              <TableCell className="text-[#d4a373]! font-bold!">
-                Category Name
-              </TableCell>
-              <TableCell className="text-[#d4a373]! font-bold! text-right!">
-                Actions
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {categories.map((cat) => (
-              <TableRow
-                key={cat._id}
-                className="hover:bg-[#2d241e]! transition-colors"
-              >
-                <TableCell className="text-[#e7dec8]! border-b-[#3c2a21]! font-medium!">
-                  {cat.name}
+        {loading ? (
+          <Box className="absolute inset-0 flex justify-center items-center bg-[#1a120b]/50 z-10">
+            <CircularProgress sx={{ color: "#d4a373" }} />
+          </Box>
+        ) : (
+          <Table>
+            <TableHead className="bg-[#2d241e]!">
+              <TableRow>
+                <TableCell className="text-[#d4a373]! font-bold!">
+                  Category Name
                 </TableCell>
-                <TableCell className="text-right! border-b-[#3c2a21]!">
-                  <IconButton
-                    onClick={() => handleOpen(cat)}
-                    className="text-blue-400! hover:bg-blue-400/10!"
-                  >
-                    <FaEdit size={18} />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => handleDelete(cat._id)}
-                    className="text-red-400! hover:bg-red-400/10!"
-                  >
-                    <FaTrash size={18} />
-                  </IconButton>
+                <TableCell className="text-[#d4a373]! font-bold! text-right!">
+                  Actions
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {categories.map((cat) => (
+                <TableRow
+                  key={cat._id}
+                  className="hover:bg-[#2d241e]! transition-colors"
+                >
+                  <TableCell className="text-[#e7dec8]! border-b-[#3c2a21]! font-medium!">
+                    {cat.name}
+                  </TableCell>
+                  <TableCell className="text-right! border-b-[#3c2a21]!">
+                    <IconButton
+                      onClick={() => handleOpen(cat)}
+                      className="text-blue-400! hover:bg-blue-400/10!"
+                    >
+                      <FaEdit size={18} />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleDelete(cat._id)}
+                      className="text-red-400! hover:bg-red-400/10!"
+                    >
+                      <FaTrash size={18} />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+
         {!loading && categories.length === 0 && (
           <div className="text-center py-10 text-gray-500!">
             No categories found for you.
           </div>
         )}
       </TableContainer>
+
+      {/* Pagination Controls */}
+      {totalCategories > size && (
+        <div className="flex justify-center mt-8">
+          <Pagination
+            count={Math.ceil(totalCategories / size)}
+            page={page}
+            onChange={handlePageChange}
+            sx={{
+              "& .MuiPaginationItem-root": { color: "#d4a373" },
+              "& .Mui-selected": {
+                backgroundColor: "#d4a373 !important",
+                color: "#1a120b",
+              },
+              "& .MuiPaginationItem-ellipsis": { color: "#d4a373" },
+            }}
+          />
+        </div>
+      )}
 
       <Dialog
         open={open}

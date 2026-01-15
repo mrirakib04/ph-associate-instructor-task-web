@@ -5,6 +5,8 @@ import {
   TextField,
   InputAdornment,
   CircularProgress,
+  Pagination,
+  Box,
 } from "@mui/material";
 import { FaSearch, FaYoutube } from "react-icons/fa";
 
@@ -13,24 +15,39 @@ const Tutorials = () => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
+  // Pagination States
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const pageSize = 9;
+
   const serverUrl =
     "https://mrirakib-ph-associate-instructor-task-server.vercel.app";
 
   useEffect(() => {
     fetchTutorials();
-  }, [search]);
+  }, [search, page]);
 
   const fetchTutorials = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${serverUrl}/tutorials?search=${search}`);
+      const res = await fetch(
+        `${serverUrl}/tutorials?search=${search}&page=${
+          page - 1
+        }&size=${pageSize}`
+      );
       const data = await res.json();
-      setTutorials(data);
+      setTutorials(data.tutorials || []);
+      setTotalCount(data.totalCount || 0);
     } catch (error) {
       console.error("Failed to fetch tutorials:", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const getEmbedUrl = (url) => {
@@ -64,7 +81,10 @@ const Tutorials = () => {
           placeholder="Search tutorials..."
           variant="outlined"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1); // Reset to first page on new search
+          }}
           sx={searchStyle}
           InputProps={{
             startAdornment: (
@@ -76,59 +96,69 @@ const Tutorials = () => {
         />
       </div>
 
-      {/* Main Content Area using standard divs */}
       {loading ? (
         <div className="flex justify-center items-center py-24">
           <CircularProgress sx={{ color: "#d4a373" }} />
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {tutorials.map((item) => (
-            <div
-              key={item._id}
-              className="bg-[#1a120b] border border-[#3c2a21] rounded-2xl overflow-hidden flex flex-col hover:border-[#d4a373] transition-all duration-300 shadow-xl group"
-            >
-              {/* Video Player Section */}
-              <div className="relative aspect-video w-full bg-black overflow-hidden">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src={getEmbedUrl(item.videoUrl)}
-                  title={item.title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="absolute inset-0"
-                ></iframe>
-              </div>
-
-              {/* Text Content Section */}
-              <div className="p-6 flex flex-col grow">
-                <div className="flex items-start gap-3 mb-4">
-                  <FaYoutube
-                    className="text-red-500 mt-1 shrink-0 group-hover:scale-110 transition-transform"
-                    size={20}
-                  />
-                  <Typography
-                    variant="h6"
-                    className="text-[#e7dec8]! font-serif! font-semibold leading-snug line-clamp-2"
-                  >
-                    {item.title}
-                  </Typography>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {tutorials.map((item) => (
+              <div
+                key={item._id}
+                className="bg-[#1a120b] border border-[#3c2a21] rounded-2xl overflow-hidden flex flex-col hover:border-[#d4a373] transition-all duration-300 shadow-xl group"
+              >
+                <div className="relative aspect-video w-full bg-black overflow-hidden">
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    src={getEmbedUrl(item.videoUrl)}
+                    title={item.title}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute inset-0"
+                  ></iframe>
                 </div>
 
-                <div className="mt-auto pt-4 border-t border-[#3c2a21]">
-                  <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">
-                    Published: {new Date(item.createdAt).toLocaleDateString()}
-                  </p>
+                <div className="p-6 flex flex-col grow">
+                  <div className="flex items-start gap-3 mb-4">
+                    <FaYoutube
+                      className="text-red-500 mt-1 shrink-0 group-hover:scale-110 transition-transform"
+                      size={20}
+                    />
+                    <Typography
+                      variant="h6"
+                      className="text-[#e7dec8]! font-serif! font-semibold leading-snug line-clamp-2"
+                    >
+                      {item.title}
+                    </Typography>
+                  </div>
+
+                  <div className="mt-auto pt-4 border-t border-[#3c2a21]">
+                    <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">
+                      Published: {new Date(item.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+
+          {/* Pagination Controls */}
+          {totalCount > pageSize && (
+            <Box className="flex justify-center mt-12">
+              <Pagination
+                count={Math.ceil(totalCount / pageSize)}
+                page={page}
+                onChange={handlePageChange}
+                sx={paginationStyle}
+              />
+            </Box>
+          )}
+        </>
       )}
 
-      {/* Empty State */}
       {!loading && tutorials.length === 0 && (
         <div className="text-center py-32 bg-[#1a120b] rounded-3xl border border-dashed border-[#3c2a21]">
           <Typography className="text-gray-500! italic font-serif">
@@ -140,7 +170,6 @@ const Tutorials = () => {
   );
 };
 
-// Search styles constant
 const searchStyle = {
   width: { xs: "100%", md: "350px" },
   "& .MuiOutlinedInput-root": {
@@ -150,6 +179,22 @@ const searchStyle = {
     "& fieldset": { borderColor: "#3c2a21" },
     "&:hover fieldset": { borderColor: "#d4a373" },
     "&.Mui-focused fieldset": { borderColor: "#d4a373" },
+  },
+};
+
+const paginationStyle = {
+  "& .MuiPaginationItem-root": {
+    color: "#e7dec8",
+    borderColor: "#3c2a21",
+    fontFamily: "var(--font-serif)",
+  },
+  "& .Mui-selected": {
+    backgroundColor: "#d4a373!important",
+    color: "#1a120b!important",
+    fontWeight: "bold",
+  },
+  "& .MuiPaginationItem-ellipsis": {
+    color: "#d4a373",
   },
 };
 

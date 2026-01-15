@@ -20,6 +20,8 @@ import {
   Chip,
   Select,
   MenuItem,
+  Pagination,
+  Box,
 } from "@mui/material";
 import { FaTrash, FaCheck, FaEye } from "react-icons/fa";
 import { toast } from "react-toastify";
@@ -34,6 +36,11 @@ const ManageReviews = () => {
   const [selectedReview, setSelectedReview] = useState(null);
   const [open, setOpen] = useState(false);
 
+  // Pagination states
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const pageSize = 10;
+
   const serverUrl =
     "https://mrirakib-ph-associate-instructor-task-server.vercel.app";
 
@@ -41,21 +48,33 @@ const ManageReviews = () => {
     if (user?.email) {
       fetchReviews();
     }
-  }, [user?.email, filterStatus]);
+  }, [user?.email, filterStatus, page]);
 
   const fetchReviews = async () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `${serverUrl}/manage-reviews/${user.email}?status=${filterStatus}`
+        `${serverUrl}/manage-reviews/${
+          user.email
+        }?status=${filterStatus}&page=${page - 1}&size=${pageSize}`
       );
       const data = await res.json();
-      setReviews(data);
+      setReviews(data.reviews || []);
+      setTotalCount(data.totalCount || 0);
     } catch (err) {
       toast.error("Failed to load reviews");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFilterChange = (e) => {
+    setFilterStatus(e.target.value);
+    setPage(1); // Reset to first page on filter change
+  };
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
   };
 
   const handleApprove = async (id) => {
@@ -73,7 +92,6 @@ const ManageReviews = () => {
   };
 
   const handleDelete = async (id) => {
-    // SweetAlert2
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -108,16 +126,17 @@ const ManageReviews = () => {
       }
     });
   };
+
   const handleOpenDialog = (review) => {
     setSelectedReview(review);
     setOpen(true);
   };
 
-  if (loading)
+  if (loading && page === 1)
     return (
-      <div className="py-20">
-        <CircularProgress sx={{ display: "block", mx: "auto", mt: 10 }} />
-      </div>
+      <Box className="py-20 flex justify-center items-center min-h-100">
+        <CircularProgress sx={{ color: "#d4a373" }} />
+      </Box>
     );
 
   return (
@@ -133,7 +152,7 @@ const ManageReviews = () => {
 
           <Select
             value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
+            onChange={handleFilterChange}
             displayEmpty
             size="small"
             sx={{
@@ -151,8 +170,27 @@ const ManageReviews = () => {
 
         <TableContainer
           component={Paper}
-          sx={{ bgcolor: "#1a120b", border: "1px solid #3c2a21" }}
+          sx={{
+            bgcolor: "#1a120b",
+            border: "1px solid #3c2a21",
+            position: "relative",
+          }}
         >
+          {loading && (
+            <Box
+              sx={{
+                position: "absolute",
+                inset: 0,
+                bgcolor: "rgba(26, 18, 11, 0.7)",
+                zIndex: 2,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <CircularProgress size={30} sx={{ color: "#d4a373" }} />
+            </Box>
+          )}
           <Table>
             <TableHead sx={{ bgcolor: "#0f0a06" }}>
               <TableRow>
@@ -229,7 +267,31 @@ const ManageReviews = () => {
               ))}
             </TableBody>
           </Table>
+          {!loading && reviews.length === 0 && (
+            <Typography sx={{ color: "gray", textAlign: "center", py: 5 }}>
+              No reviews found.
+            </Typography>
+          )}
         </TableContainer>
+
+        {/* Pagination Section */}
+        {totalCount > pageSize && (
+          <Box className="flex justify-center mt-8">
+            <Pagination
+              count={Math.ceil(totalCount / pageSize)}
+              page={page}
+              onChange={handlePageChange}
+              sx={{
+                "& .MuiPaginationItem-root": { color: "#e7dec8" },
+                "& .Mui-selected": {
+                  bgcolor: "#d4a373!important",
+                  color: "#1a120b!important",
+                },
+                "& .MuiPaginationItem-ellipsis": { color: "#d4a373" },
+              }}
+            />
+          </Box>
+        )}
 
         {/* View Review Dialog */}
         <Dialog
