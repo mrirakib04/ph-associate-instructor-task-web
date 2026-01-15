@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📚 BookWorm - Your Ultimate Digital Library
 
-## Getting Started
+BookWorm is a modern, high-performance web application designed for book enthusiasts to discover tutorials, manage categories, and read/write book reviews. Built with the Power of **Next.js 15**, **Tailwind CSS**, and **Material UI**.
 
-First, run the development server:
+## ✨ Key Features
+
+- **Learning Hub:** Access handpicked video tutorials and educational content.
+- **Review System:** Users can submit reviews, and authors can approve or delete them.
+- **Category Management:** Organize your library by creating and managing book categories.
+- **Full-Text Search:** Quickly find tutorials and reviews using the integrated search system.
+- **Server-Side Pagination:** Smooth data handling for large libraries and review lists.
+- **Modern UI:** A beautiful, responsive "Midnight & Gold" aesthetic using MUI and Tailwind.
+
+---
+
+### Live Site Link
+
+- [https://mrirakib-ph-associate-instructor-task-web.vercel.app/](https://mrirakib-ph-associate-instructor-task-web.vercel.app/)
+
+### Client Repository
+
+- [https://github.com/mrirakib04/ph-associate-instructor-task-web](https://github.com/mrirakib04/ph-associate-instructor-task-web)
+
+### Server Repository
+
+- [https://github.com/mrirakib04/ph-associate-instructor-task-server](https://github.com/mrirakib04/ph-associate-instructor-task-server)
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** [Next.js](https://nextjs.org/) (App Router), React, Tailwind CSS.
+- **UI Components:** [Material UI (MUI)](https://mui.com/), React Icons.
+- **Authentication:** [NextAuth.js](https://next-auth.js.org/).
+- **Backend:** Node.js, Express.js.
+- **Database:** MongoDB.
+- **Notifications:** React-Toastify & SweetAlert2.
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Ensure you have [Node.js](https://nodejs.org/) installed (version 18.x or later recommended).
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone [https://github.com/your-username/bookworm-web.git](https://github.com/your-username/bookworm-web.git)
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+# or
+yarn install
+
+```
+
+3. Set up environment variables:
+   Create a `.env.local` file in the root directory and add your credentials (NextAuth secrets, API URLs, etc.).
+
+### Running the Development Server
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📖 Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/app`: Contains the Next.js App Router pages and layouts.
+- `/components`: Reusable UI components (Navbar, Footer, Loading states).
+- `/public`: Static assets like images and icons.
+- `/styles`: Global CSS and Tailwind configurations.
 
-## Learn More
+## 🌐 Deployment
 
-To learn more about Next.js, take a look at the following resources:
+The easiest way to deploy BookWorm is via the [Vercel Platform](https://vercel.com/new).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Push your code to GitHub.
+2. Import the repository into Vercel.
+3. Configure your Environment Variables in the Vercel dashboard.
+4. Hit **Deploy**.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🤝 Contributing
 
-## Deploy on Vercel
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Fork the Project.
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the Branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
